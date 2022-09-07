@@ -30,49 +30,10 @@ export class UserController {
     private JwtService: JwtService,
   ) {}
 
-  // Create user
-  @Post()
-  @UsePipes(ValidationPipe)
-  public async createOne(@Body() createUserRequest: CreateUserDTO) {
-    const resp = await this.userService.createOne(createUserRequest);
-
-    return resp;
-  }
-
-  //Get All user
-  @Get()
-  async posts() {
-    return this.userService.getall();
-  }
-
-  //Get user By ID
-  @Get('/:id')
-  async post(@Param('id') userid: string) {
-    return this.userService.getbyid(userid);
-  }
-
-  // Delete a User
-  @Delete('/:id')
-  async delete(@Param('id') args: string) {
-    return this.userService.deleteUser(args);
-  }
-
-  //Update User
-  /* @Put('/:id')
-  async updates(@Body() updateUserRequest: UpdateUSerDTO) {
-    return this.userService.updateUser('id', updateUserRequest);
-  }*/
-  @Put('/:id')
-  async update(
-    @Param('id') userid: string,
-    @Body() updateUserRequest: UpdateUSerDTO,
-  ) {
-    return this.userService.updateUser(userid, updateUserRequest);
-  }
-
-  /*JWT REGISTER LOGIN COOKIE */
+  /*JWT REGISTER/LOGIN/Logout with COOKIE */
 
   //Register
+  //localhost:3007/user/register
   @Post('register')
   async register(
     @Body('name') name: string,
@@ -93,17 +54,13 @@ export class UserController {
   }
 
   // Login
+  //localhost:3007/user/login
   @Post('login')
   async login(
     @Body() data: LoginUserDTO,
-    // @Body('email') email: string,
-    // @Body('password') password: string,
     @Res({ passthrough: true }) response: Response,
   ) {
     const user = await this.userService.findOne(data);
-
-    // console.log('received data is', data, user);
-    // return data;
 
     if (!user) {
       throw new BadRequestException('invalid credentials');
@@ -123,6 +80,7 @@ export class UserController {
   }
 
   //get user
+  // localhost:3007/user/user
   @Get('user')
   async user(@Req() request: Request) {
     try {
@@ -134,23 +92,48 @@ export class UserController {
         throw new UnauthorizedException();
       }
 
-      // const user = await this.userService.findOne({email:data[] });
-
-      // const { password, ...result } = user;
-
       return data;
     } catch (e) {
       throw new UnauthorizedException();
     }
   }
+  //Get user By ID
+  // localhost:3007/user/id
+  @Get('/:id')
+  async post(@Param('id') userid: string) {
+    return this.userService.getbyid(userid);
+  }
 
+  // Delete a User
+  // localhost:3007/user/id
+  @Delete('/:id')
+  async delete(@Param('id') args: string) {
+    return this.userService.deleteUser(args);
+  }
+
+  // Update user
+  // localhost:3007/user/id
+  @Put('/:id')
+  async update(
+    @Param('id') userid: string,
+    @Body() updateUserRequest: UpdateUSerDTO,
+  ) {
+    return this.userService.updateUser(userid, updateUserRequest);
+  }
   // Logout
+  //localhost:3007/user/logout
   @Post('logout')
   async logout(@Res({ passthrough: true }) response: Response) {
     response.clearCookie('jwt');
 
     return {
-      message: 'Succesfully Logout Comeback again! ',
+      message: 'Successfully Logged out Comeback again! ',
     };
+  }
+  //Get All user
+  // localhost:3007/user/
+  @Get()
+  async posts() {
+    return this.userService.getall();
   }
 }
