@@ -127,7 +127,7 @@ export class UserController {
     return this.userService.deleteUser(args);
   }
 
-  // Update user
+  // Update users
   // localhost:3007/auth/users  ->PUT
   @Put('users/:id')
   async update(
